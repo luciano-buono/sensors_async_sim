@@ -1,5 +1,5 @@
 import asyncio
-import random
+from numpy import random
 from contextlib import suppress
 
 class PeriodicTimer:
@@ -30,18 +30,18 @@ class PeriodicTimer:
 
 class Sensor:
 
-    def __init__(self, timeout, units, min_value, max_value):
+    def __init__(self, timeout, units, mu, sigma):
         self._timer = PeriodicTimer(timeout, self._get_results)
         print("\nTimer Inited")
         self._units = units
         print(self._units)
-        self._min_value = min_value
-        print(self._min_value)
-        self._max_value = max_value
-        print(self._max_value)
+        self._mu = mu #mean value
+        print(self._mu)
+        self._sigma = sigma #standard deviation
+        print(self._sigma)
 
     async def _get_results(self):
-        print ("Result: " + str(random.uniform(self._min_value, self._max_value)) + " " + self._units)
+        print ("Result: " + str(random.normal(self._mu, self._sigma)) + " " + self._units)
         await asyncio.sleep(0.1)
 
     async def start(self):
@@ -52,14 +52,14 @@ class Sensor:
 
 async def main():
     print('\nfirst example:')
-    sensor = Sensor(2, "Hz", 10, 10000)  # set timer for two seconds
+    sensor = Sensor(2, "Hz", 5000, 0.1)  # set timer for two seconds
     await sensor.start()
     await asyncio.sleep(10)  # wait to see timer works
     await sensor.stop()
 
-    sensor2 = Sensor(1, "°C", -30, 150)  # set timer for two seconds
-    sensor3 = Sensor(2, "hPa", -100, 100)  # set timer for two seconds
-    sensor4 = Sensor(3, "K", 0, 270)  # set timer for two seconds
+    sensor2 = Sensor(1, "°C", 100, 0.3)  # set timer for two seconds
+    sensor3 = Sensor(2, "hPa", 120, 0.1)  # set timer for two seconds
+    sensor4 = Sensor(3, "K", 5000, 0.5)  # set timer for two seconds
 
     print('\nsecond example:')
     await asyncio.gather(

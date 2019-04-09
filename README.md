@@ -11,6 +11,7 @@ Virtualenv provided:
 
 * python 3.7
 * asyncio 3.4.3
+* numpy 1.16.2
 
 How to run
 ----------
