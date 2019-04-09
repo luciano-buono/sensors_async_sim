@@ -20,7 +20,7 @@ How to run
 $ git clone https://github.com/HernanG234/sensors_async_sim.git
 $ cd sensors_async_sim
 $ source venv/bin/activate
-#You should see (venv) at the beggining of your terminal#
+# You should see (venv) at the beggining of your terminal
 (venv) $ python main.py
 ```
 

@@ -57,9 +57,9 @@ async def main():
     await asyncio.sleep(10)  # wait to see timer works
     await sensor.stop()
 
-    sensor2 = Sensor(1, "°C", 100, 0.3)  # set timer for two seconds
+    sensor2 = Sensor(1, "°C", 100, 0.3)  # set timer for one seconds
     sensor3 = Sensor(2, "hPa", 120, 0.1)  # set timer for two seconds
-    sensor4 = Sensor(3, "K", 5000, 0.5)  # set timer for two seconds
+    sensor4 = Sensor(3, "K", 5000, 0.5)  # set timer for three seconds
 
     print('\nsecond example:')
     await asyncio.gather(
@@ -67,7 +67,7 @@ async def main():
         sensor3.start(),
         sensor4.start()
     )
-    await asyncio.sleep(2.5)  # and wait to see it won't call callback
+    await asyncio.sleep(10)  # and wait to see it won't call callback
     await asyncio.gather(
         sensor2.stop(),
         sensor3.stop(),
