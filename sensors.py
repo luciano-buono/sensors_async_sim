@@ -1,6 +1,9 @@
 import asyncio
 from numpy import random
 from contextlib import suppress
+import paho.mqtt.publish as publish
+
+host = "localhost"
 
 class PeriodicTimer:
     def __init__(self, timeout, func):
@@ -30,7 +33,8 @@ class PeriodicTimer:
 
 class Sensor:
 
-    def __init__(self, timeout, units, mu, sigma):
+    def __init__(self, name, timeout, units, mu, sigma):
+        self._name = name
         self._timer = PeriodicTimer(timeout, self._get_results)
         print("\nTimer Inited")
         self._units = units
@@ -41,7 +45,9 @@ class Sensor:
         print(self._sigma)
 
     async def _get_results(self):
-        print ("Result: " + str(random.normal(self._mu, self._sigma)) + " " + self._units)
+        reading = str(random.normal(self._mu, self._sigma)) + " " + self._units
+        print (self._name + ": " + str(reading))
+        publish.single(topic=self._name+"/value", payload=reading, hostname=host)
         await asyncio.sleep(0.1)
 
     async def start(self):
@@ -52,14 +58,14 @@ class Sensor:
 
 async def main():
     print('\nfirst example:')
-    sensor = Sensor(2, "Hz", 5000, 0.1)  # set timer for two seconds
+    sensor = Sensor("frequency", 2, "Hz", 5000, 0.1)  # set timer for two seconds
     await sensor.start()
     await asyncio.sleep(10)  # wait to see timer works
     await sensor.stop()
 
-    sensor2 = Sensor(1, "°C", 100, 0.3)  # set timer for one seconds
-    sensor3 = Sensor(2, "hPa", 120, 0.1)  # set timer for two seconds
-    sensor4 = Sensor(3, "K", 5000, 0.5)  # set timer for three seconds
+    sensor2 = Sensor("temperature", 1, "C", 100, 0.3)  # set timer for one seconds
+    sensor3 = Sensor("pressure", 2, "hPa", 120, 0.1)  # set timer for two seconds
+    sensor4 = Sensor("moreTemperature", 3, "K", 5000, 0.5)  # set timer for three seconds
 
     print('\nsecond example:')
     await asyncio.gather(

@@ -1,2 +1,3 @@
 asyncio==3.4.3
 numpy==1.16.2
+paho-mqtt==1.4.0
