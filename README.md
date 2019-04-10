@@ -7,11 +7,18 @@ sensors. Future objectives will consist on writing and reading to a database
 
 Requirements
 ------------
+Mosquitto is needed for mqtt messaging. On Ubuntu:
+
+```
+apt-get install mosquitto
+```
+
 Virtualenv provided:
 
 * python 3.7
 * asyncio 3.4.3
 * numpy 1.16.2
+* paho-mqtt 1.4.0
 
 How to run
 ----------
@@ -27,7 +34,8 @@ $ source venv/bin/activate
 Upcoming features
 ----------------
 
-* Implement writing to mongo.
-* Implement writing to sqlite.
-* Plot
+- [x] ~~MQTT messaging~~
+- [ ] Implement writing to mongo.
+- [ ] Implement writing to sqlite.
+- [ ] Plot
 
