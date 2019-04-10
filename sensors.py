@@ -1,4 +1,5 @@
 import asyncio
+import json
 from numpy import random
 from contextlib import suppress
 import paho.mqtt.publish as publish
@@ -33,21 +34,23 @@ class PeriodicTimer:
 
 class Sensor:
 
-    def __init__(self, name, timeout, units, mu, sigma):
+    def __init__(self, name, timeout, unit, mu, sigma):
         self._name = name
         self._timer = PeriodicTimer(timeout, self._get_results)
         print("\nTimer Inited")
-        self._units = units
-        print(self._units)
+        self._unit = unit
+        print(self._unit)
         self._mu = mu #mean value
         print(self._mu)
         self._sigma = sigma #standard deviation
         print(self._sigma)
 
     async def _get_results(self):
-        reading = str(random.normal(self._mu, self._sigma)) + " " + self._units
-        print (self._name + ": " + str(reading))
-        publish.single(topic=self._name+"/value", payload=reading, hostname=host)
+        reading = random.normal(self._mu, self._sigma)
+        dict_msg = {"value": reading, "unit": self._unit}
+        msg = json.dumps(dict_msg)
+        print (self._name + ": " + str(reading) + " " + self._unit)
+        publish.single(topic=self._name, payload=msg, hostname=host)
         await asyncio.sleep(0.1)
 
     async def start(self):
