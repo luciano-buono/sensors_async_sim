@@ -1,7 +1,11 @@
 import paho.mqtt.client as paho
+import sqlite3
+from sqlitehandler import write_to_db
+#from mongohandler import write_to_db
 
 def on_message(mosq, obj, msg):
     print ("%-20s %d %s" % (msg.topic, msg.qos, msg.payload))
+    write_to_db(msg.topic, msg.payload)
     mosq.publish('pong', 'ack', 0)
 
 def on_publish(mosq, obj, mid):

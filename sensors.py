@@ -1,5 +1,7 @@
 import asyncio
 import json
+import time
+
 from numpy import random
 from contextlib import suppress
 import paho.mqtt.publish as publish
@@ -47,7 +49,7 @@ class Sensor:
 
     async def _get_results(self):
         reading = random.normal(self._mu, self._sigma)
-        dict_msg = {"value": reading, "unit": self._unit}
+        dict_msg = {"value": reading, "unit": self._unit, "timestamp": time.time()}
         msg = json.dumps(dict_msg)
         print (self._name + ": " + str(reading) + " " + self._unit)
         publish.single(topic=self._name, payload=msg, hostname=host)
