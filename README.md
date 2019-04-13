@@ -13,12 +13,19 @@ Mosquitto is needed for mqtt messaging. On Ubuntu:
 apt-get install mosquitto
 ```
 
+MongoDB is needed for using this DB:
+
+```
+apt-get install mongodb-org
+```
+
 Virtualenv provided:
 
 * python 3.7
 * asyncio 3.4.3
 * numpy 1.16.2
 * paho-mqtt 1.4.0
+* pymongo 3.7.2
 
 How to run
 ----------
@@ -35,7 +42,9 @@ Upcoming features
 ----------------
 
 - [x] ~~MQTT messaging~~
-- [ ] Implement writing to mongo.
-- [ ] Implement writing to sqlite.
+- [x] Implement writing to mongo.
+- [x] Implement writing to sqlite.
+- [ ] Initialize DBs on subscriber.
+- [ ] Accept arg to select mongo or sqlite.
 - [ ] Plot
-
+- [ ] Add "signals" to sensors (noise, step, ramp, etc.) to plot ant query sth nicer
