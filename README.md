@@ -38,6 +38,26 @@ $ source venv/bin/activate
 (venv) $ python main.py
 ```
 
+Windows installation
+----------------
+Install all requiriments:   -pip install requirements.txt
+Download Mosquitto QuickInstall for Windows: http://www.steves-internet-guide.com/install-mosquitto-broker/
+Download Sqlite for Windows: https://sqlite.org/2019/sqlite-tools-win32-x86-3280000.zip
+
+Executing script on Windows: 
+----------------
+Execute each in a separate PowerShell
+
+.\mosquitto
+python initsqlite.py
+python suscriber.py
+python sensors.py
+sqlite3.exe
+	Inside Sqlite:
+		.open iot-sqlite.db
+		.tables
+		select * from pressure;
+
 Upcoming features
 ----------------
 
