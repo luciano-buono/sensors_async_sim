@@ -1,6 +1,7 @@
 import asyncio
 import json
 import time
+import math
 
 from numpy import random
 from contextlib import suppress
@@ -34,18 +35,45 @@ class PeriodicTimer:
             await asyncio.sleep(self.timeout)
             await self.func()
 
+global_tick = 0.03
+modifiers = ["none", "step", "ramp", "sin"]
+sensors_list = []
+
+async def tick_func():
+    if (len(sensors_list) == 0):
+        await asyncio.sleep(0.01)
+    else:
+        for sensor in sensors_list:
+            if sensor._modifier == "none":
+                 continue
+            if sensor._modifier == "step":
+                 await sensor.Step()
+            if sensor._modifier == "ramp":
+                 await sensor.Ramp()
+            if sensor._modifier == "sin":
+                 await sensor.Sin()
+
+    await asyncio.sleep(0.01)
+
+
 class Sensor:
 
     def __init__(self, name, timeout, unit, mu, sigma):
         self._name = name
         self._timer = PeriodicTimer(timeout, self._get_results)
+        self._modifier = "none"
+        self._offset = 0
+        self._frequency = 0
         print("\nTimer Inited")
         self._unit = unit
         print(self._unit)
         self._mu = mu #mean value
+        self._orig_mu = mu
         print(self._mu)
         self._sigma = sigma #standard deviation
+        self._orig_sigma = sigma
         print(self._sigma)
+        sensors_list.append(self)
 
     async def _get_results(self):
         reading = random.normal(self._mu, self._sigma)
@@ -59,13 +87,53 @@ class Sensor:
         await self._timer.start()
 
     async def stop(self):
+        sensors_list.pop()
         await self._timer.stop()
 
+    async def modifier(self, mod_string, offset=0, duration=0, freq=0):
+        if mod_string in modifiers:
+            self._modifier = mod_string
+            self._offset = offset
+            self._duration = duration
+            self._frequency = freq
+            self._counter = 0
+        else:
+            print ("Modifier function not recognized\n")
+
+    async def Step(self):
+        self._mu = self._mu + self._offset
+        self._modifier = "none"
+        self._offset = 0
+
+    async def Ramp(self):
+        if (self._mu < (self._orig_mu + self._offset)):
+            self._mu = self._mu + (self._offset * global_tick / self._duration)
+        else:
+            self._modifier = "none"
+            self._offset = 0
+
+    async def Sin(self):
+        if (self._counter < 1):
+            self._end_time = loop.time() + self._duration*1000
+            self._counter += 1
+        elif (loop.time() < self._end_time):
+            self._mu = self._orig_mu + self._offset * math.sin(2*math.pi/self._frequency*self._counter)
+            self._counter += 1
+        else:
+            self._mu = self._orig_mu
+            self._modifier = "none"
+            self._offset = 0
+            self._counter = 0
+
 async def main():
+    global_clock = PeriodicTimer(global_tick, tick_func)
+    await global_clock.start()
     print('\nfirst example:')
-    sensor = Sensor("frequency", 2, "Hz", 5000, 0.1)  # set timer for two seconds
+    sensor = Sensor("frequency", 0.5, "Hz", 5000, 0.1)  # set timer for two seconds
     await sensor.start()
-    await asyncio.sleep(10)  # wait to see timer works
+    await asyncio.sleep(7) # wait to see timer works
+    await sensor.modifier("sin", 10, 5, 500)
+    await asyncio.sleep(15) # wait to see timer works
     await sensor.stop()
 
     sensor2 = Sensor("temperature", 1, "C", 100, 0.3)  # set timer for one seconds
