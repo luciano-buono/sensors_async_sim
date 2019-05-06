@@ -18,6 +18,7 @@ if __name__ == '__main__':
     client.on_message = on_message
     client.on_publish = on_publish
 
+    # Not working with certificates yet!
     #client.tls_set('root.ca', certfile='c1.crt', keyfile='c1.key')
     client.connect("127.0.0.1", 1883)
 
