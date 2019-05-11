@@ -48,6 +48,7 @@ apt-get install sqlite3 mongodb-org
 ```
 $ git clone https://github.com/HernanG234/sensors_async_sim.git
 $ cd sensors_async_sim
+$ git checkout sample
 $ source venv/bin/activate
 # You should see (venv) at the beggining of your terminal
 (venv) $ python initsqlite.py
