@@ -84,7 +84,7 @@ class Sensor:
         reading = random.normal(self._mu, self._sigma)
         dict_msg = {"value": reading, "unit": self._unit, "timestamp": time.time() - self.n*self.day}
         msg = json.dumps(dict_msg)
-        print (self._name + ": " + str(reading) + " " + self._unit + "timestamp: " + str(time.time() - self.n*self.day))
+        print (self._name + ": " + str(reading) + " " + self._unit + " timestamp: " + str(time.time() - self.n*self.day))
         publish.single(topic=self._name, payload=msg, hostname=host)
         await asyncio.sleep(0.1)
 
@@ -135,42 +135,96 @@ class Sensor:
 async def main():
     global_clock = PeriodicTimer(global_tick, tick_func)
     await global_clock.start()
-    print('\nfirst example:')
-    sensor = Sensor("frequency", 0.5, "Hz", 5000, 0.1)  # set timer for two seconds
-    sensor2 = Sensor("pressure", 2, "hPa", 120, 0.1)  # set timer for two seconds
-    await sensor.start()
-    await sensor2.start()
-    await asyncio.sleep(10) # wait to see timer works
-    print('\nfirst example:')
-    sensor.set_day(1)
-    await sensor.modifier("sin", 10, 5, 500)
-    await asyncio.sleep(10) # wait to see timer works
-    await sensor.modifier("ramp", 1000, 5)
-    print('\nfirst example:')
-    sensor.set_day(2)
-    await asyncio.sleep(10) # wait to see timer works
-    await sensor.modifier("ramp", -1000, 5)
-    print('\nfirst example:')
-    sensor.set_day(3)
-    await asyncio.sleep(10) # wait to see timer works
-    await sensor.stop()
+    print('\nDay 0!:\n')
+    sensor1 = Sensor("bedroom/temperature", 0.3, "C", 24, 0.5)
+    sensor2 = Sensor("bedroom/humidity", 0.3, "%", 70, 1)
+    sensor3 = Sensor("bedroom/noisemeter", 2, "dBA", 50, 5)
+    sensor4 = Sensor("kitchen/temperature", 0.5, "C", 26, 4)
+    sensor5 = Sensor("kitchen/humidity", 0.5, "%", 50, 5)
+    sensor6 = Sensor("livingroom/temperature", 0.8, "C", 22, 2)
+    sensor7 = Sensor("livingroom/humidity", 0.8, "%", 80, 1)
+    sensors = [sensor1, sensor2, sensor3, sensor4, sensor5, sensor6, sensor7]
+    await asyncio.gather(
+        sensor1.start(),
+        sensor2.start(),
+        sensor3.start(),
+        sensor4.start(),
+        sensor5.start(),
+        sensor6.start(),
+        sensor7.start()
+    )
+    await asyncio.sleep(20) # wait to see timer works
+    print('\nDay 1:')
+    for sensor in sensors:
+        sensor.set_day(1)
+    await sensor1.modifier("sin", 5, 5, 0.5)
+    await sensor2.modifier("ramp", 10, 5)
+    await sensor3.modifier("step", 10)
+    await sensor4.modifier("sin", 5, 5, 0.5)
+    await sensor5.modifier("ramp", 15, 5)
+    await sensor6.modifier("step", -5)
+    await sensor7.modifier("sin", 5, 5, 0.5)
+    await asyncio.sleep(10) # wait!
+    await sensor7.modifier("sin", 5, 5, 0.5)
+    await sensor6.modifier("ramp", 10, 5)
+    await sensor5.modifier("step", 10)
+    await sensor4.modifier("sin", 5, 5, 0.5)
+    await sensor3.modifier("ramp", 15, 5)
+    await sensor2.modifier("step", -5)
+    await sensor1.modifier("sin", 5, 5, 0.5)
+    await asyncio.sleep(10) # wait!
 
-#    sensor2 = Sensor("temperature", 1, "C", 100, 0.3)  # set timer for one seconds
-#    sensor3 = Sensor("pressure", 2, "hPa", 120, 0.1)  # set timer for two seconds
-#    sensor4 = Sensor("moreTemperature", 3, "K", 5000, 0.5)  # set timer for three seconds
+    print('\nDay 2:')
+    for sensor in sensors:
+        sensor.set_day(2)
+    await sensor1.modifier("sin", 7, 5, 1)
+    await sensor2.modifier("ramp", -8, 5)
+    await sensor3.modifier("step", 10)
+    await sensor4.modifier("sin", 3, 5, 1)
+    await sensor5.modifier("ramp", -18, 5)
+    await sensor6.modifier("step", 4)
+    await sensor7.modifier("sin", 4, 5, 1)
+    await asyncio.sleep(10) # wait!
+    await sensor7.modifier("sin", 8, 5, 1)
+    await sensor6.modifier("ramp", -10, 5)
+    await sensor5.modifier("step", -8)
+    await sensor4.modifier("sin", 1, 5, 1)
+    await sensor3.modifier("ramp", -12, 5)
+    await sensor2.modifier("step", 7)
+    await sensor1.modifier("sin", 3, 5, 1)
+    await asyncio.sleep(10) # wait!
 
-#    print('\nsecond example:')
-#    await asyncio.gather(
-#        sensor2.start(),
-#        sensor3.start(),
-#        sensor4.start()
-#    )
-#    await asyncio.sleep(10)  # and wait to see it won't call callback
-#    await asyncio.gather(
-#        sensor2.stop(),
-#        sensor3.stop(),
-#        sensor4.stop()
-#    )
+    print('\nDay 3:')
+    for sensor in sensors:
+        sensor.set_day(3)
+    await sensor3.modifier("sin", 5, 5, 0.5)
+    await sensor4.modifier("ramp", 10, 5)
+    await sensor2.modifier("step", 10)
+    await sensor5.modifier("sin", 5, 5, 0.5)
+    await sensor7.modifier("ramp", 15, 5)
+    await sensor1.modifier("step", -5)
+    await sensor6.modifier("sin", 5, 5, 0.5)
+    await asyncio.sleep(10) # wait
+    await sensor4.modifier("sin", 8, 5, 1)
+    await sensor2.modifier("ramp", -10, 5)
+    await sensor7.modifier("step", -8)
+    await sensor4.modifier("sin", 1, 5, 1)
+    await sensor5.modifier("ramp", -12, 5)
+    await sensor3.modifier("step", 7)
+    await sensor1.modifier("sin", 3, 5, 1)
+    await asyncio.sleep(10) # wait!
+
+    await asyncio.gather(
+        sensor1.stop(),
+        sensor2.stop(),
+        sensor3.stop(),
+        sensor4.stop(),
+        sensor5.stop(),
+        sensor6.stop(),
+        sensor7.stop()
+    )
+    await global_clock.stop()
+    print('\nThe end')
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
