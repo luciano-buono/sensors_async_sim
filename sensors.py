@@ -136,13 +136,13 @@ async def main():
     global_clock = PeriodicTimer(global_tick, tick_func)
     await global_clock.start()
     print('\nDay 0!:\n')
-    sensor1 = Sensor("bedroom/temperature", 0.3, "C", 24, 0.5)
-    sensor2 = Sensor("bedroom/humidity", 0.3, "%", 70, 1)
-    sensor3 = Sensor("bedroom/noisemeter", 2, "dBA", 50, 5)
-    sensor4 = Sensor("kitchen/temperature", 0.5, "C", 26, 4)
-    sensor5 = Sensor("kitchen/humidity", 0.5, "%", 50, 5)
-    sensor6 = Sensor("livingroom/temperature", 0.8, "C", 22, 2)
-    sensor7 = Sensor("livingroom/humidity", 0.8, "%", 80, 1)
+    sensor1 = Sensor("table_Terrazatemperatura", 0.3, "C", 24, 0.5)
+    sensor2 = Sensor("table_TerrazaHumedad", 0.3, "%", 70, 1)
+    sensor3 = Sensor("table_TerrazaNoisemeter", 2, "dBA", 50, 5)
+    sensor4 = Sensor("table_Patiotemperatura", 0.5, "C", 26, 4)
+    sensor5 = Sensor("table_PatioHumedad", 0.5, "%", 50, 5)
+    sensor6 = Sensor("table_Jardintemperatura", 0.8, "C", 22, 2)
+    sensor7 = Sensor("table_JardinHumedad", 0.8, "%", 80, 1)
     sensors = [sensor1, sensor2, sensor3, sensor4, sensor5, sensor6, sensor7]
     await asyncio.gather(
         sensor1.start(),

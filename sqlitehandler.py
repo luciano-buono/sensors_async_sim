@@ -17,9 +17,13 @@ class DatabaseManager():
         self.cur.close()
         self.conn.close()
 
-def write_to_db(dbObj, topic, jsonData):
 
+
+def write_to_db(topic, jsonData):
+
+    dbObj = DatabaseManager()
     data = json.loads(jsonData)
-#   query = ???
+    query = '''INSERT INTO '''+topic+'''(value, unit, timestamp) VALUES(?,?,?)'''
     print (query)
-#   actually write to the db now
+    dbObj.add_del_update_db_record(query,(data['value'], data['unit'], data['timestamp']))
+    del dbObj

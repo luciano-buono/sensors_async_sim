@@ -5,6 +5,7 @@ from sqlitehandler import write_to_db
 
 def on_message(mosq, obj, msg):
     print ("%-20s %d %s" % (msg.topic, msg.qos, msg.payload))
+    write_to_db(msg.topic, msg.payload)
     mosq.publish('pong', 'ack', 0)
 
 def on_publish(mosq, obj, mid):
@@ -21,7 +22,9 @@ if __name__ == '__main__':
     #client.tls_set('root.ca', certfile='c1.crt', keyfile='c1.key')
     client.connect("127.0.0.1", 1883)
 
-    client.subscribe("dummysubscription/#", 0)
+    client.subscribe("table_Terrazatemperatura/#", 0)
+    client.subscribe("table_Patiotemperatura/#", 0)
+    client.subscribe("table_Jardintemperatura/#", 0)
 
     while client.loop() == 0:
         pass
